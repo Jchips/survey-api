@@ -8,11 +8,11 @@ const { Survey } = require('../models');
 const router = express.Router();
 
 // Routers
-router.get('/survey', bearerAuth, acl('read'), handleGetAll);
-router.get('/survey/:id', bearerAuth, acl('read'), handleGetOne);
-router.post('/survey', bearerAuth, acl('createSurvey'), handleCreate);
-router.put('/survey/:id', bearerAuth, acl('updateSurvey'), handleUpdate);
-router.delete('/survey/:id', bearerAuth, acl('deleteSurvey'), handleDelete);
+router.get('/surveys', bearerAuth, acl('read'), handleGetAll);
+router.get('/surveys/:id', bearerAuth, acl('read'), handleGetOne);
+router.post('/surveys', bearerAuth, acl('createSurvey'), handleCreate);
+router.put('/surveys/:id', bearerAuth, acl('updateSurvey'), handleUpdate);
+router.delete('/surveys/:id', bearerAuth, acl('deleteSurvey'), handleDelete);
 
 // Handlers
 async function handleGetAll(req, res, next) {

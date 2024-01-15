@@ -8,8 +8,8 @@ const { Response } = require('../models');
 const router = express.Router();
 
 // Routes
-router.get('/response/:survey_id', bearerAuth, acl('viewResponse'), handleGetAll);
-router.post('/response', bearerAuth, acl('createResponse'), handleCreate);
+router.get('/responses/:survey_id', bearerAuth, acl('viewResponse'), handleGetAll);
+router.post('/responses', bearerAuth, acl('createResponse'), handleCreate);
 
 // Handlers
 async function handleGetAll(req, res, next) {
