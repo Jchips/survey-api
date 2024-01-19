@@ -29,7 +29,7 @@ to their surveys. This project has 3 tables in its 'survey_api' database: Users,
 ### Links and Resources
 
 - [GitHub Actions ci/cd](https://github.com/Jchips/survey-api/actions)
-<!-- - [back-end server url](https://auth-api-dev-4rc4.onrender.com) -->
+- [back-end server url](https://survey-api-dev.onrender.com)
 - [Pull Request](https://github.com/Jchips/survey-api/pull/2)
 
 ### Setup
@@ -94,4 +94,4 @@ Auth routes
 
 #### UML
 
-<!-- ![Lab 8 UML](./src/assets/lab-8-uml.png) -->
+![Lab 8 UML](./src/assets/lab-9-uml.png)
