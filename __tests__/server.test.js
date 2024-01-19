@@ -133,10 +133,11 @@ describe('Access control', () => {
   });
 
   test('create a response', async () => {
-    let response = await request.post('/responses').set('Authorization', `Bearer ${user.token}`).send({
+    let createdResponse = {
       response: 'tipsycow',
       survey_id: 1,
-    });
+    };
+    let response = await request.post('/responses').set('Authorization', `Bearer ${user.token}`).send(createdResponse);
 
     expect(response.status).toBe(201);
     expect(response.body.response).toEqual('tipsycow');
@@ -146,11 +147,12 @@ describe('Access control', () => {
     let response = await request.get('/responses/1').set('Authorization', `Bearer ${creator1.token}`); // creator1, survey #1
 
     // create new survey by creator2
-    await request.post('/surveys').set('Authorization', `Bearer ${creator2.token}`).send({
+    let newSurvey = {
       title: 'Hats',
       questions:['how many hats do you own?'],
       created_by_user_id: 2,
-    });
+    };
+    await request.post('/surveys').set('Authorization', `Bearer ${creator2.token}`).send(newSurvey);
   
     let response3 = await request.get('/responses/4').set('Authorization', `Bearer ${creator2.token}`); // creator2, survey #4
     let response4 = await request.get('/responses/1').set('Authorization', `Bearer ${creator2.token}`); // creator2, survey #1
