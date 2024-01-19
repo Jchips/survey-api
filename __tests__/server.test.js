@@ -6,7 +6,8 @@ const { db, User } = require('../src/auth/models');
 const { Survey } = require('../src/models');
 const request = supertest(app);
 
-let creator;
+let creator1;
+let creator2;
 let user;
 
 beforeAll(async () => {
@@ -14,8 +15,13 @@ beforeAll(async () => {
     await db.sync();
 
     // create users
-    creator = await User.create({
+    creator1 = await User.create({
       username: 'fox',
+      password: 'password123',
+      role: 'creator',
+    });
+    creator2 = await User.create({
+      username: 'duck',
       password: 'password123',
       role: 'creator',
     });
@@ -48,8 +54,8 @@ afterAll(async () => {
 
 describe('Access control', () => {
   test('allows read access', async () => {
-    let response = await request.get('/surveys').set('Authorization', `Bearer ${creator.token}`);
-    let response2 = await request.get('/surveys/1').set('Authorization', `Bearer ${creator.token}`);
+    let response = await request.get('/surveys').set('Authorization', `Bearer ${creator1.token}`);
+    let response2 = await request.get('/surveys/1').set('Authorization', `Bearer ${creator1.token}`);
 
     expect(response.status).toBe(200);
     expect(response.body.length).toEqual(2);
@@ -63,7 +69,7 @@ describe('Access control', () => {
       questions: ['what music artist\'s do you listen to the most?'],
       created_by_user_id: '1',
     };
-    let response = await request.post('/surveys').set('Authorization', `Bearer ${creator.token}`).send(survey);
+    let response = await request.post('/surveys').set('Authorization', `Bearer ${creator1.token}`).send(survey);
 
     expect(response.status).toBe(201);
     expect(response.body.title).toEqual('Music');
@@ -82,7 +88,7 @@ describe('Access control', () => {
       questions: ['what song\'s do you listen to the most?'],
       created_by_user_id: '1',
     };
-    let response = await request.put('/surveys/3').set('Authorization', `Bearer ${creator.token}`).send(survey);
+    let response = await request.put('/surveys/3').set('Authorization', `Bearer ${creator1.token}`).send(survey);
 
     expect(response.status).toBe(200);
     expect(response.body.questions[0]).toEqual('what song\'s do you listen to the most?');
@@ -95,14 +101,28 @@ describe('Access control', () => {
     expect(response.text).toEqual('Access denied');
   });
 
+  test('logged in user can\'t delete surveys they didn\'t created', async () => {
+    let response = await request.put('/surveys/3').set('Authorization', `Bearer ${creator2.token}`);
+
+    expect(response.status).toBe(403);
+    expect(response.text).toEqual('Access denied');
+  });
+
   test('delete a survey. Subsequent GET for the same survey ID should result in nothing found.', async () => {
-    let response = await request.delete('/surveys/3').set('Authorization', `Bearer ${creator.token}`);
+    let response = await request.delete('/surveys/3').set('Authorization', `Bearer ${creator1.token}`);
     let response2 = await request.get('/surveys/3').set('Authorization', `Bearer ${user.token}`);
 
     expect(response.status).toBe(200);
     expect(response.text).toEqual('deleted survey');
     expect(response.body).toEqual({});
     expect(response2.body).toBeNull;
+  });
+
+  test('logged in user can\'t delete surveys they didn\'t created', async () => {
+    let response = await request.delete('/surveys/2').set('Authorization', `Bearer ${creator2.token}`);
+
+    expect(response.status).toBe(403);
+    expect(response.text).toEqual('Access denied');
   });
 
   test('does not allow someone who is just a user to delete survey', async () => {
@@ -123,30 +143,21 @@ describe('Access control', () => {
   });
 
   test('only a logged in creator can view responses to their surveys', async () => {
-    let newUser = await User.create({
-      username: 'duck',
-      password: 'password123',
-      role: 'creator',
-    });
+    let response = await request.get('/responses/1').set('Authorization', `Bearer ${creator1.token}`); // creator1, survey #1
 
-    let response = await request.get('/responses/1/1').set('Authorization', `Bearer ${creator.token}`); // user #1, survey #1
-    let response2 = await request.get('/responses/3/1').set('Authorization', `Bearer ${creator.token}`); // user #3, survey #1
-
-    // create new survey by newUser
-    await request.post('/surveys').set('Authorization', `Bearer ${newUser.token}`).send({
+    // create new survey by creator2
+    await request.post('/surveys').set('Authorization', `Bearer ${creator2.token}`).send({
       title: 'Hats',
       questions:['how many hats do you own?'],
-      created_by_user_id: 3,
+      created_by_user_id: 2,
     });
-    let response3 = await request.get('/responses/3/4').set('Authorization', `Bearer ${newUser.token}`); // user #3, survey #4
-    let response4 = await request.get('/responses/3/1').set('Authorization', `Bearer ${newUser.token}`); // user #3, survey #1
+  
+    let response3 = await request.get('/responses/4').set('Authorization', `Bearer ${creator2.token}`); // creator2, survey #4
+    let response4 = await request.get('/responses/1').set('Authorization', `Bearer ${creator2.token}`); // creator2, survey #1
 
     expect(response.status).toBe(200);
     expect(response.body.length).toEqual(1);
     expect(response.body[0].response).toEqual('tipsycow');
-
-    expect(response2.status).toBe(403);
-    expect(response2.text).toEqual('Access denied');
 
     expect(response3.status).toBe(200);
     expect(response3.body).toEqual([]);

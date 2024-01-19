@@ -64,14 +64,14 @@ to their surveys. This project has 3 tables in its 'survey_api' database: Users,
 
 - GET : `/surveys` - Fetches all surveys.
       - With the parameter uid, you can get all surveys from a certain creator by entering their user id number.
-- GET : `/surveys/:id` - Fetches specific survey
+- GET : `/surveys/:survey_id` - Fetches specific survey
 - POST : `/surveys` - Create a survey (only for creators and admins)
-- PUT : `/surveys/:id` - Update a survey (only for creators and admins)
-- DELETE : `/surveys/:id` - Delete a survey (only for creators and admins)
+- PUT : `/surveys/:survey_id` - Update a survey that user created (only for creators and admins)
+- DELETE : `/surveys/:survey_id` - Delete a survey that user created (only for creators and admins)
 
 /responses routes
 
-- GET : `/responses/:user_id/:survey_id` - Fetches all responses to a survey that you posted (only for creators and admins)
+- GET : `/responses/:survey_id` - Fetches all responses to a survey that you posted (only for creators and admins)
 - POST : `/responses` - Create a response to a survey
 
 Auth routes

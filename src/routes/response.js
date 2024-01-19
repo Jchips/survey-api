@@ -10,7 +10,7 @@ const router = express.Router();
 
 // ------ Routes -----
 
-router.get('/:userId/:survey_id', bearerAuth, acl('viewResponse'), checkUid, handleGetAll);
+router.get('/:survey_id', bearerAuth, acl('viewResponse'), checkUid, handleGetAll);
 router.post('/', bearerAuth, acl('createResponse'), handleCreate);
 
 // ------ Handlers -----
