@@ -1,8 +1,8 @@
 'use strict';
 
-const { app } = require('../src/server');
+const { app } = require('../../src/server');
 const supertest = require('supertest');
-const { db, User } = require('../src/auth/models');
+const { db, User } = require('../../src/auth/models');
 const request = supertest(app);
 
 let person = {
