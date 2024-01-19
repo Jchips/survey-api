@@ -7,7 +7,7 @@ const { Survey } = require('../src/models');
 const request = supertest(app);
 
 let person;
-// let person2;
+let person2;
 
 beforeAll(async () => {
   try {
@@ -17,6 +17,12 @@ beforeAll(async () => {
       password: 'password123',
       role: 'admin',
     });
+    person2 = await User.create({
+      username: 'goat',
+      password: 'password123',
+      role: 'user',
+    });
+
     await Survey.create({
       title: 'Animals',
       questions: ['what\'s your favorite animal?'],
@@ -29,11 +35,6 @@ beforeAll(async () => {
     console.error('Error syncing database:', err);
     process.exit(1); // Exit the process if there's an error
   }
-  // person2 = await User.create({
-  //   username: 'goat',
-  //   password: 'password123',
-  //   role: 'user',
-  // });
 });
 
 afterAll(async () => {
@@ -51,12 +52,12 @@ describe('Access control', () => {
     expect(response2.body.title).toEqual('Animals');
   });
 
-  // test('does not allow a reader update access', async () => {
-  //   let response = await request.put('/api/v2/food/0').set('Authorization', `Bearer ${person2.token}`);
+  test('does not allow someone who is just a user to post survey', async () => {
+    let response = await request.post('/surveys').set('Authorization', `Bearer ${person2.token}`);
 
-  //   expect(response.status).toEqual(500);
-  //   expect(response.text).toEqual('{"status":500,"message":"Access Denied"}');
-  // });
+    expect(response.status).toEqual(403);
+    expect(response.text).toEqual('Access denied');
+  });
 
   // test('adds an item to the DB and returns an object with the added item', async () => {
   //   let object = {

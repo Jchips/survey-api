@@ -17,7 +17,11 @@ router.delete('/surveys/:id', bearerAuth, acl('deleteSurvey'), handleDelete);
 // Handlers
 async function handleGetAll(req, res, next) {
   try {
-    let allSurveys = await Survey.findAll();
+    let queryObj = {};
+    if (req.query.uid) {
+      queryObj = { where: { created_by_user_id: req.query.uid } };
+    }
+    let allSurveys = await Survey.findAll(queryObj);
     res.status(200).json(allSurveys);
   } catch (err) {
     next(err);
