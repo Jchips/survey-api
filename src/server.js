@@ -16,8 +16,8 @@ const PORT = process.env.PORT;
 app.get('/', (req, res) => res.status(200).send('default route is working'));
 
 app.use(authRoutes);
-app.use(surveyRoutes);
-app.use(responseRoutes);
+app.use('/surveys', surveyRoutes);
+app.use('/responses', responseRoutes);
 
 app.use('*', notFound);
 app.use(errorHandler);

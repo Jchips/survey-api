@@ -8,13 +8,14 @@ const bearerAuth = require('./middleware/bearer');
 
 const authRouter = express.Router();
 
-// Routes
+// ------ Routes -----
+
 authRouter.post('/signup', signup);
 authRouter.post('/signin', basicAuth, signin);
 authRouter.get('/users', bearerAuth, acl('deleteUser'), handleViewUsers);
 authRouter.delete('/delete/:id', bearerAuth, acl('deleteUser'), handleDeleteUser);
 
-// Handlers
+// ------ Handlers -----
 
 // Sign up
 async function signup(req, res, next) {

@@ -8,11 +8,14 @@ const { Response } = require('../models');
 
 const router = express.Router();
 
-// Routes
-router.get('/responses/:userId/:survey_id', bearerAuth, acl('viewResponse'), checkUid, handleGetAll);
-router.post('/responses', bearerAuth, acl('createResponse'), handleCreate);
+// ------ Routes -----
 
-// Handlers
+router.get('/:userId/:survey_id', bearerAuth, acl('viewResponse'), checkUid, handleGetAll);
+router.post('/', bearerAuth, acl('createResponse'), handleCreate);
+
+// ------ Handlers -----
+
+// Get all the responses from a survey that user has created
 async function handleGetAll(req, res, next) {
   let { survey_id } = req.params;
   let parsedSurveyId = parseInt(survey_id);
@@ -24,6 +27,7 @@ async function handleGetAll(req, res, next) {
   }
 }
 
+// Creates a response
 async function handleCreate(req, res, next) {
   let userResponse = req.body;
   try {

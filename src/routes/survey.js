@@ -7,14 +7,19 @@ const { Survey } = require('../models');
 
 const router = express.Router();
 
-// Routers
-router.get('/surveys', bearerAuth, acl('read'), handleGetAll);
-router.get('/surveys/:id', bearerAuth, acl('read'), handleGetOne);
-router.post('/surveys', bearerAuth, acl('createSurvey'), handleCreate);
-router.put('/surveys/:id', bearerAuth, acl('updateSurvey'), handleUpdate);
-router.delete('/surveys/:id', bearerAuth, acl('deleteSurvey'), handleDelete);
+// ------ Routes -----
 
-// Handlers
+router.get('/', bearerAuth, acl('read'), handleGetAll);
+router.get('/:id', bearerAuth, acl('read'), handleGetOne);
+router.post('/', bearerAuth, acl('createSurvey'), handleCreate);
+router.put('/:id', bearerAuth, acl('updateSurvey'), handleUpdate);
+router.delete('/:id', bearerAuth, acl('deleteSurvey'), handleDelete);
+
+// ------ Handlers -----
+
+// Gets all surveys in database
+// Query parameter for user ID (uid) to get all surveys from a specific user
+// Sends object with all surveys found
 async function handleGetAll(req, res, next) {
   try {
     let queryObj = {};
@@ -28,6 +33,8 @@ async function handleGetAll(req, res, next) {
   }
 }
 
+// Gets a specific survey specified by its id
+// Sends object with survey
 async function handleGetOne(req, res, next) {
   let { id } = req.params;
   try {
@@ -38,6 +45,8 @@ async function handleGetOne(req, res, next) {
   }
 }
 
+// Creates a new survey
+// Sends object with newly created survey
 async function handleCreate(req, res, next) {
   let newSurvey = req.body;
   try {
@@ -48,17 +57,23 @@ async function handleCreate(req, res, next) {
   }
 }
 
+// Edits a survey
+// Sends object with newly updated survey
 async function handleUpdate(req, res, next) {
   let { id } = req.params;
   let newEdits = req.body;
   try {
-    let editedSurvey = await Survey.update(newEdits, { where: { id }, returning: true, plain: true });
+    // let editedSurvey = await Survey.update(newEdits, { where: { id }, returning: true, plain: true });
+    let survey = await Survey.findOne({ where: { id } });
+    let editedSurvey = await survey.update(newEdits);
     res.status(200).json(editedSurvey);
   } catch (err) {
     next(err);
   }
 }
 
+// Deletes a survey
+// Sends message saying 'deleted survey'
 async function handleDelete(req, res, next) {
   let { id } = req.params;
   try {

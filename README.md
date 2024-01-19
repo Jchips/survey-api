@@ -8,13 +8,23 @@
 
 Create a new application using your API Server and Authentication System learnings.
 
-Time to build something cool! You’ve learned so much and as a class we’ve covered a lot of material. By giving you the opportunity to build and deploy an Auth Server, you gain fluency, foster understanding, and put your new skills to work. You may build something that looks and functions similar to lab-08, or perhaps you build something that surpasses lab-08. Either way, the goal of this lab is to reinforce any learnings that might need reinforcing.
+Time to build something cool! You’ve learned so much and as a class we’ve covered a lot of
+material. By giving you the opportunity to build and deploy an Auth Server, you gain fluency,
+foster understanding, and put your new skills to work. You may build something that looks and
+functions similar to lab-08, or perhaps you build something that surpasses lab-08. Either way,
+the goal of this lab is to reinforce any learnings that might need reinforcing.
 
 Your application must employ the following programming concepts:
 
 1. API Auth server must be deployed. A single, backend application is expected
 2. Use of your API server to perform database operations
 3. Use of login/auth/acl to control access to your resources
+
+### My Project
+
+I created a survey API where survey creators can create surveys (and edit and delete them) and
+then users can view them and respond to them. Then the creators of the surveys can view responses
+to their surveys. This project has 3 tables in its 'survey_api' database: Users, Surveys, Responses.
 
 ### Links and Resources
 
@@ -37,8 +47,12 @@ Your application must employ the following programming concepts:
 
 #### Features / Routes
 
-- Query parameter to view all surveys from a specific creator
+- Creators and admins can create/edit/delete surveys
+- Any type of user can post anonymous responses to surveys
+- There is a query parameter to view all surveys by a specific creator
 - Creators can view all the responses to a survey that they posted if they are logged in
+- Admin can view all the users (everyone)
+- Admin can delete users (everyone) that are being bad
 
 - What was your key takeaway?
 
@@ -76,7 +90,7 @@ Auth routes
   - Error handling tests
   - POST to /signup to create a new user
   - POST to /signin to login as a user (use basic auth)
-  - Tests to make sure only authenticated users can access routes that have limited access
+  - Tests to make sure only authenticated and authorized users can access routes that have limited access
 
 #### UML
 
